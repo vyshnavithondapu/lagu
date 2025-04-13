@@ -1,0 +1,22 @@
+name: Deploy Flask to AWS
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.AWS_PRIVATE_KEY }}" > LAGU.pem
+          chmod 600 LAGU.pem
+
+      - name: Run Ansible Playbook
+        run: |
+          sudo apt update && sudo apt install -y ansible
+          ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
